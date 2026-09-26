@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑客松组队名片生成器</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: url("pool-bg.png") center/cover no-repeat fixed;
+  position: relative;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(59, 130, 246, 0.2));
+  z-index: -2;
+  animation: bgMove 8s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%);
+  top: -100px;
+  left: -100px;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: -1;
+  animation: lightMove 10s ease-in-out infinite alternate;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes lightMove {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(120px, 180px) scale(1.15); }
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(14, 165, 233, 0.7);
+}
+
+.subtitle {
+  text-align: center;
+  color: #e0f2fe;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+.wrap-row {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.form-box,
+.card-preview {
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25);
+  transition: all 0.3s ease;
+}
+
+.form-box {
+  flex: 1;
+  padding: 24px;
+}
+
+.card-preview {
+  width: 420px;
+  flex-shrink: 0;
+  padding: 28px;
+  color: #ffffff;
+}
+/* 名片悬浮上浮 */
+.card-preview:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px rgba(14, 165, 233, 0.35);
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: 0.3s;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #caf0ff;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+input:focus,
+textarea:focus {
+  border-color: #a5f3fc;
+  box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.35);
+}
+
+textarea {
+  resize: none;
+  height: 90px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.45);
+}
+button:active{
+  transform: scale(0.96);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.card-preview h3 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(125, 211, 252, 0.7);
+}
+
+.card-preview p {
+  font-size: 14px;
+  margin: 10px 0;
+  color: #f7fcff;
+  line-height: 1.7;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.card-preview span {
+  color: #e0f7ff;
+  font-weight: bold;
+}
+
+.footer-text {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #e0f2fe;
+}
+/*保存提示*/
+.tip-message{
+  position:fixed;
+  bottom:40px;
+  left:50%;
+  transform: translateX(-50%);
+  background:rgba(0,0,0,0.55);
+  color:#fff;
+  padding:10px 20px;
+  border-radius:30px;
+  opacity:0;
+  transition:opacity 0.4s;
+  pointer-events:none;
+}
+.tip-message.show{
+  opacity:1;
+}
+
+@media (max-width: 768px) {
+  .wrap-row {
+    flex-direction: column;
+  }
+  .card-preview {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<div class="tip-message" id="tip">✅保存成功！</div>
+
+<div class="container">
+  <h2>黑客松组队名片生成器</h2>
+  <p class="subtitle">填写信息，一键生成你的组队分享名片</p>
+
+  <div class="wrap-row">
+    <div class="form-box">
+      <input id="name" placeholder="昵称">
+      <input id="skill" placeholder="技能（例：前端 / 文案 / PPT）">
+      <input id="lang" placeholder="技术栈（例：HTML / Python）">
+      <textarea id="want" placeholder="想找什么样的队友"></textarea>
+
+      <div class="btn-group">
+        <button onclick="saveCard()">保存图片</button>
+      </div>
+    </div>
+
+    <div id="card" class="card-preview">
+      <h3 id="c-name">昵称</h3>
+      <p>技能：<span id="c-skill"></span></p>
+      <p>技术栈：<span id="c-lang"></span></p>
+      <p>寻找队友：<span id="c-want"></span></p>
+      <p class="footer-text">黑客松组队名片</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const tip = document.getElementById("tip");
+// 拿到所有输入框
+const nameInput = document.getElementById('name');
+const skillInput = document.getElementById('skill');
+const langInput = document.getElementById('lang');
+const wantInput = document.getElementById('want');
+
+const cName = document.getElementById('c-name');
+const cSkill = document.getElementById('c-skill');
+const cLang = document.getElementById('c-lang');
+const cWant = document.getElementById('c-want');
+
+// 实时更新函数
+function updateCard(){
+  cName.innerText = nameInput.value || "昵称";
+  cSkill.innerText = skillInput.value;
+  cLang.innerText = langInput.value;
+  cWant.innerText = wantInput.value;
+}
+
+// 监听输入，每敲一个字就执行更新
+nameInput.addEventListener('input', updateCard);
+skillInput.addEventListener('input', updateCard);
+langInput.addEventListener('input', updateCard);
+wantInput.addEventListener('input', updateCard);
+
+async function saveCard(){
+  const dom = document.getElementById('card');
+  const canvas = await html2canvas(dom);
+  const a = document.createElement('a');
+  a.download = "组队名片.png";
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  tip.classList.add('show');
+  setTimeout(()=>{
+    tip.classList.remove('show');
+  },1800)
+}
+</script>
+
+</body>
+</html>
