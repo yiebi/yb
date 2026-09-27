@@ -209,6 +209,10 @@ button:hover {
 .tip-message.show{
   opacity:1;
 }
+/* ======新增：仅截图时生效的渐变蓝色背景====== */
+#card.screenshot-bg {
+  background: linear-gradient(#40b8ee, #2288dd);
+}
 
 @media (max-width: 768px) {
   .wrap-row {
@@ -279,11 +283,19 @@ wantInput.addEventListener('input', updateCard);
 
 async function saveCard(){
   const dom = document.getElementById('card');
+  // 开启渐变背景（仅截图）
+  dom.classList.add('screenshot-bg');
+  await new Promise(resolve => setTimeout(resolve,100));
+
   const canvas = await html2canvas(dom);
   const a = document.createElement('a');
   a.download = "组队名片.png";
   a.href = canvas.toDataURL('image/png');
   a.click();
+
+  // 移除，页面恢复原样
+  dom.classList.remove('screenshot-bg');
+
   tip.classList.add('show');
   setTimeout(()=>{
     tip.classList.remove('show');
